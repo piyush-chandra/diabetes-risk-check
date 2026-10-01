@@ -46,6 +46,24 @@
       ]
     },
     {
+      "source": "/gan.7b277b16.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/gan_results.a1a5d53d.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
       "source": "/model.5c8b2e08.json",
       "headers": [
         {

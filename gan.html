@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Can a GAN improve training? — the experiment | Diabetes Risk Check</title>
+<meta name="description" content="Did generating synthetic training rows with a GAN improve the diabetes model? A leakage-safe 5-fold experiment: GAN-augmented vs baseline vs oversampling, with the honest answer." />
+<link rel="canonical" href="https://diabetes-risk.vercel.app/gan" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Can a GAN improve training? — the experiment" />
+<meta property="og:description" content="GAN-augmented vs baseline vs oversampling on a real 520-record medical dataset — leakage-safe, with the honest answer." />
+<meta property="og:url" content="https://diabetes-risk.vercel.app/gan" />
+<meta property="og:image" content="https://diabetes-risk.vercel.app/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.97d865ca.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="/styles.c6fb2b03.css" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "headline": "GAN augmentation for small medical tabular data — a controlled experiment",
+  "about": "Leakage-safe 5-fold evaluation of CTGAN-based training-row augmentation against a baseline on a 520-record diabetes dataset."
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span><span class="brand-text"><strong>Diabetes Risk Check</strong></span></a>
+    <nav class="site-nav" aria-label="Site"><a href="/how">How it works</a><a href="/gan">GAN experiment</a><a href="/summary">The numbers</a><a href="/about">Honest limits</a></nav>
+  </div>
+</header>
+<noscript><div class="wrap"><p class="noscript-notice" role="alert">The results table loads with JavaScript. Headline: baseline stayed best — the GAN added no measurable gain on this dataset, and the honest answer explains why.</p></div></noscript>
+<main class="wrap prose-page">
+  <h1>Can a GAN improve training? An honest experiment</h1>
+  <p><strong>Short answer: no — on this dataset it didn't, and the numbers below show why that's the interesting result.</strong></p>
+
+  <div class="prose-block">
+    <p><strong>The idea.</strong> A GAN is two networks playing a game: a generator invents synthetic rows of patient data, a discriminator tries to spot the fakes. They improve until the fakes are statistically indistinguishable from real records — a way to multiply scarce medical data. The <a href="https://github.com/Diyago/GAN-for-tabular-data" rel="noopener">tabgan protocol</a> adds a trick: filter the synthetic rows by how closely they resemble the <em>test</em> distribution, without using its labels.</p>
+  </div>
+  <div class="prose-block">
+    <p><strong>The setup, made trustworthy.</strong> Five folds; CTGAN <em>fitted only on each fold's training split</em> (labels included, the standard practice); 400 synthetic rows per fold; adversarial RF filtering toward the fold's held-out rows; then the deployed ensemble recipe trained on <em>(real + synthetic)</em> and scored on data it never saw. Sibling arms: plain baseline, GAN-generated-data-only (stress test), and classic majority-class oversampling.</p>
+  </div>
+
+  <div id="gan-cards" class="cards"></div>
+
+  <div class="table-scroll">
+    <table class="model-table" id="gan-table">
+      <caption class="sr-only">Mean out-of-fold metrics per augmentation strategy</caption>
+    </table>
+  </div>
+  <p class="hint">Mean across 5 folds ± std. ROC-AUC is the headline; Brier is a loss (lower is better).</p>
+
+  <div class="section-head" id="answer"><h2>The honest answer</h2></div>
+  <p id="answer-body">Computing…</p>
+
+  <div class="section-head"><h2>Reading the result</h2></div>
+  <p>The GAN-augmented and oversampled arms land a hair above baseline (+0.05pp AUC each), well inside fold noise — a tie, not a win. That's the expected outcome on a dataset where the baseline already reads ~0.998 AUC: there's almost no gap left for a generator to fill. The GAN-only stress test collapses (0.42 AUC — worse than chance): CTGAN with 300 epochs on ~416 rows learns the marginal Yes/No frequencies but not which combinations matter, confirming synthetic rows alone can't replace real ones here. The classic oversample matches the GAN at zero training cost — the honest conclusion is that GAN augmentation adds <em>nothing on this dataset</em> over the free trick, and the tabgan paper's own cross-dataset results (their Table 1.2: GAN wins 2 of 7, loses 5) agree that it's dataset-dependent, not a general upgrade.</p>
+
+  <div class="section-head"><h2>Why this matters more than a win would</h2></div>
+  <p>With 520 rows, the model already extracts nearly all the signal — its out-of-fold AUC is ~0.998. Synthetic rows mostly <em>re-encode existing patterns</em>: a generator that's good enough to add genuinely new information is indistinguishable from having more real data, which is exactly what we don't have. And on medical tabular data the generator can amplify the minority class's noise — the failure mode the table shows. The tabgan paper itself found sampling strategies improve some datasets and hurt others (their Table 1.2); ours is one of the "hurts" — and knowing that precisely beats pretending a fancy technique helped.</p>
+  <div class="prose-block">
+    <p><strong>What WOULD help this dataset:</strong> more real records, blood-test features (HbA1c/glucose), and symptom scales instead of Yes/No. Generative tricks don't manufacture information that was never collected.</p>
+  </div>
+  <p class="hint">Experiment code: <code>train/gan_experiment.py</code> in the repo. Charts show per-fold points so you can see the variance, not just the mean.</p>
+</main>
+<footer class="site-footer"><div class="wrap footer-inner">
+  <nav class="footer-nav"><a href="/">Back to the check</a><a href="/summary">The numbers</a></nav>
+  <p class="footer-disclaimer">Educational risk estimate only — not medical advice.</p>
+</div></footer>
+<script src="/gan.7b277b16.js" defer></script>
+</body>
+</html>
