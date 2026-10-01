@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Diabetes Risk Check — free, private, 2 minutes</title>
+<meta name="description" content="Answer 16 quick dropdown questions. Get an instant, private estimate of early diabetes risk — scored in your browser, nothing uploaded." />
+<meta name="keywords" content="diabetes risk checker, diabetes symptoms quiz, type 2 diabetes risk, early diabetes signs, free health screening" />
+<link rel="canonical" href="https://diabetes-risk.vercel.app/" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Diabetes Risk Check — free, private, 2 minutes" />
+<meta property="og:description" content="16 quick questions. Instant private result in your browser. Nothing uploaded." />
+<meta property="og:url" content="https://diabetes-risk.vercel.app/" />
+<meta property="og:image" content="https://diabetes-risk.vercel.app/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content="Diabetes Risk Check" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Diabetes Risk Check — free, private, 2 minutes" />
+<meta name="twitter:description" content="16 quick questions. Instant private result. Nothing uploaded." />
+<meta name="twitter:image" content="https://diabetes-risk.vercel.app/og.png" />
+<link rel="icon" href="/favicon.97d865ca.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/favicon.97d865ca.svg" />
+<link rel="preload" href="/model.f9aee09a.json" as="fetch" crossorigin />
+<link rel="stylesheet" href="/styles.c6fb2b03.css" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Diabetes Risk Check",
+  "applicationCategory": "HealthApplication",
+  "description": "Estimates early-stage diabetes risk from 16 common symptoms using a cross-validated machine-learning model. Runs entirely in the browser.",
+  "url": "https://diabetes-risk.vercel.app/",
+  "audience": {"@type": "Audience", "audienceType": "General public"},
+  "disclaimer": "Educational risk estimate only — not a medical diagnosis. Consult a qualified healthcare professional."
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#assessor">Skip to questions</a>
+<noscript><div class="wrap"><p class="noscript-notice" role="alert">This check needs JavaScript — your answers are scored privately inside your own browser, so the page can't work without it. Please enable JavaScript and reload.</p></div></noscript>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+      </span>
+      <span class="brand-text"><strong>Diabetes Risk Check</strong></span>
+    </a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="/how">How it works</a>
+      <a href="/summary">The numbers</a>
+      <a href="/about">Honest limits</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <p class="eyebrow">Free · Private · No blood test to start</p>
+      <h1>Could your symptoms be worth a blood test?</h1>
+      <p class="hero-sub">Answer 16 quick questions about how you've been feeling. A machine-learning model — validated on 520 anonymised patient records — compares your answers and scores your pattern instantly, right on your device.</p>
+      <ul class="reassure" aria-label="What this is">
+        <li>Nothing you type leaves your phone or laptop</li>
+        <li>No account, no email, no upload</li>
+        <li>A prompt to test — never a diagnosis</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="assessor" class="assessor">
+    <div class="wrap">
+      <form id="risk-form" novalidate>
+        <div class="field field-age">
+          <label for="age">Your age</label>
+          <select id="age">
+            <option value="" selected>Select age</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option><option value="60">60</option><option value="61">61</option><option value="62">62</option><option value="63">63</option><option value="64">64</option><option value="65">65</option><option value="66">66</option><option value="67">67</option><option value="68">68</option><option value="69">69</option><option value="70">70</option><option value="71">71</option><option value="72">72</option><option value="73">73</option><option value="74">74</option><option value="75">75</option><option value="76">76</option><option value="77">77</option><option value="78">78</option><option value="79">79</option><option value="80">80</option><option value="81">81</option><option value="82">82</option><option value="83">83</option><option value="84">84</option><option value="85">85</option><option value="86">86</option><option value="87">87</option><option value="88">88</option><option value="89">89</option><option value="90">90</option>
+          </select>
+          <p class="hint" id="age-hint">Roughly is fine — it shapes how the pattern is read</p>
+        </div>
+        <div class="field">
+          <label for="gender">Your sex</label>
+          <select id="gender">
+            <option value="1" selected>Male</option>
+            <option value="0">Female</option>
+          </select>
+          <p class="hint">Recorded as sex in the source data</p>
+        </div>
+        <h2 class="group-heading">How you've been feeling <span class="muted">(last few weeks)</span></h2>
+        <div id="dynamic-groups"></div>
+        <p class="hint form-footnote">Every dropdown has Yes and No. When in doubt for a symptom, choose the closest match — one off answer shifts the score slightly, not dramatically.</p>
+        <button type="submit" class="btn btn-primary btn-block-mobile">See my risk</button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        <p class="model-note" id="model-note">Loading model…</p>
+      </form>
+    </div>
+  </section>
+
+  <section id="result" class="result" hidden>
+    <div class="wrap">
+      <article class="result-card" aria-labelledby="result-heading">
+        <div class="result-head">
+          <p class="result-pct" id="result-gauge">—</p>
+          <div>
+            <h2 id="result-heading">Your result</h2>
+            <p id="result-sub" class="result-sub"></p>
+          </div>
+        </div>
+        <div class="result-grid">
+          <div class="result-block">
+            <h3>What pushed your score up</h3>
+            <ul id="factor-list" class="factor-list"></ul>
+          </div>
+          <div class="result-block">
+            <h3>What to do next</h3>
+            <ol class="next-steps">
+              <li id="next-step-1">Loading…</li>
+              <li id="next-step-2"></li>
+              <li id="next-step-3"></li>
+            </ol>
+            <p class="disclaimer">This is an educational estimate, not a diagnosis. Only a blood test and a clinician can tell you where you stand.</p>
+          </div>
+        </div>
+        <div class="ask-assistant" id="ask-assistant" hidden>
+          <h3>Questions about your result?</h3>
+          <div id="chat-chips" class="chat-chips"></div>
+          <form id="chat-form" class="chat-form">
+            <input id="chat-field" type="text" placeholder="Ask anything about your result…" aria-label="Ask a question" />
+            <button type="submit" class="btn btn-small">Ask</button>
+          </form>
+          <div id="chat-log" aria-live="polite"></div>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div>
+      <p class="footer-title">Diabetes Risk Check</p>
+      <p class="footer-note">Built by <a href="https://github.com/piyush-chandra/Early-stage-diabetes-risk-prediction" rel="noopener">Piyush Chandra</a>. Trained on the Kaggle/NIDDK diabetes dataset (520 records).</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">
+      <a href="/how">How it works</a>
+      <a href="/summary">The numbers</a>
+      <a href="/about">Honest limits</a>
+    </nav>
+    <p class="footer-disclaimer">This tool provides educational risk estimates only and is not medical advice. Always consult a qualified healthcare professional.</p>
+  </div>
+</footer>
+
+<script src="/model.4fc5e1a2.js" defer></script>
+<script src="/app.3fee95a9.js" defer></script>
+</body>
+</html>

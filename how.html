@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How it works — plain-language guide | Diabetes Risk Check</title>
+<meta name="description" content="What the check does, how the machine-learning model works in plain words, and what it can't tell you." />
+<link rel="canonical" href="https://diabetes-risk.vercel.app/how" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="How it works — plain-language guide" />
+<meta property="og:description" content="What the check does, how the model works, and what it can't tell you." />
+<meta property="og:url" content="https://diabetes-risk.vercel.app/how" />
+<meta property="og:image" content="https://diabetes-risk.vercel.app/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.97d865ca.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="/styles.c6fb2b03.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span><span class="brand-text"><strong>Diabetes Risk Check</strong></span></a>
+    <nav class="site-nav" aria-label="Site"><a href="/how">How it works</a><a href="/summary">The numbers</a><a href="/about">Honest limits</a></nav>
+  </div>
+</header>
+<main class="wrap prose-page">
+  <h1>How this check works</h1>
+  <nav class="toc" aria-label="On this page"><a href="#what">What it does</a><a href="#model">How it decides</a><a href="#privacy">Privacy</a></nav>
+
+  <h2 id="what">What it does</h2>
+  <p>You answer 16 dropdown questions — age, sex, and 14 symptoms people commonly report. The tool compares your pattern against 520 anonymised patient records where the diagnosis is known, and tells you how closely your answers match the patients who had diabetes.</p>
+  <p>It's a <strong>pattern-matcher, not a doctor</strong>: it can't look at you, run a blood test, or know your history. What it can do is tell you whether your symptom pattern is common enough among diabetes patients to make a blood test worth asking for.</p>
+
+  <h2 id="model">How it decides</h2>
+  <p>Inside your browser, <strong>five small statistical models</strong> each read your answers their own way — one looks for simple overall trends, one for strict probability math, one compares you to the most similar patients on record, and two learn from decision-tree patterns. A final layer weighs their opinions into one score.</p>
+  <p>Why five? Each has different blind spots: single models are either overconfident or too crude. Combining them — and checking that behaviour on 520 real records with cross-validation — gives a more trustworthy estimate than any one model alone. The full comparison scores are on <a href="/summary">The numbers</a> page.</p>
+
+  <h2 id="privacy">Privacy</h2>
+  <p>The entire model is a small file downloaded once when the page loads. Your answers are scored locally; nothing is uploaded, stored, or shared. Close the tab and everything is gone.</p>
+</main>
+<footer class="site-footer"><div class="wrap footer-inner">
+  <nav class="footer-nav"><a href="/">Back to the check</a><a href="/about">Honest limits</a></nav>
+  <p class="footer-disclaimer">Educational risk estimate only — not medical advice.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The numbers — 10 algorithms compared | Diabetes Risk Check</title>
+<meta name="description" content="10 ML algorithms compared head-to-head on diabetes risk: ensemble 97.9% accuracy, 0.998 ROC-AUC, cross-validated on 520 records." />
+<meta name="keywords" content="machine learning comparison, diabetes prediction algorithms, random forest vs xgboost, logistic regression, stacking ensemble" />
+<link rel="canonical" href="https://diabetes-risk.vercel.app/summary" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="The numbers — 10 algorithms compared" />
+<meta property="og:description" content="Which algorithm wins on diabetes risk? Cross-validated comparison." />
+<meta property="og:url" content="https://diabetes-risk.vercel.app/summary" />
+<meta property="og:image" content="https://diabetes-risk.vercel.app/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.97d865ca.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="/styles.c6fb2b03.css" />
+<script src="/summary.df1f33ee.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Diabetes risk prediction — model comparison",
+  "about": "Cross-validated performance of 10 machine-learning algorithms on the 520-record diabetes symptom dataset.",
+  "proficiencyLevel": "Intermediate"
+}
+</script>
+</head>
+<body>
+<noscript><div class="wrap"><p class="noscript-notice" role="alert">The table loads with JavaScript. Headline: the 5-model stacking ensemble leads at 97.9% accuracy / 0.998 ROC-AUC; Random Forest follows at 97.3%.</p></div></noscript>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span><span class="brand-text"><strong>Diabetes Risk Check</strong></span></a>
+    <nav class="site-nav" aria-label="Site"><a href="/how">How it works</a><a href="/summary">The numbers</a><a href="/about">Honest limits</a></nav>
+  </div>
+</header>
+<main class="wrap prose-page">
+  <h1>The numbers, honestly measured</h1>
+  <p>Every algorithm below was scored the same unforgiving way: <strong>repeated 5-fold cross-validation (5 folds × 4 repeats)</strong> — every record is predicted only by models that never trained on it — and 95% confidence intervals from 2,000 bootstrap resamples. No accuracy alone, no single lucky split.</p>
+
+  <div id="ensemble-cards" class="cards"></div>
+
+  <div class="table-scroll">
+    <table class="model-table" id="compare-table">
+      <caption class="sr-only">Cross-validated performance of 10 algorithms and a stacking ensemble on the diabetes dataset</caption>
+    </table>
+  </div>
+  <p class="hint">↓ Brier is a loss: lower is better. Sensitivity = recall on positive cases — in screening this matters most, because a missed case is the expensive error.</p>
+
+  <div class="section-head"><h2>How to read this</h2></div>
+  <p><strong>ROC-AUC</strong> measures ranking quality across all thresholds (1.0 = perfect). <strong>Brier</strong> rewards being well-calibrated — saying 70% only when it's truly 70%. The deployed model is the stacking ensemble: it trades a sliver of raw accuracy for the best calibration, because the tool reports honest probabilities, not just labels.</p>
+</main>
+<footer class="site-footer"><div class="wrap footer-inner">
+  <nav class="footer-nav"><a href="/">Back to the check</a><a href="/about">Honest limits</a></nav>
+  <p class="footer-disclaimer">Educational risk estimate only — not medical advice. Method per <a href="/how">How it works</a>.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'sha256-YqTIkzn98IchRnLlFIm5povRb4Go0cYF7+3inkD3mM4='; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Honest limits | Diabetes Risk Check</title>
+<meta name="description" content="Why diabetes screening matters, how this ML model was built, and its honest limits: 520 records, self-reported symptoms, not a diagnosis." />
+<meta name="keywords" content="diabetes screening importance, machine learning limitations, health AI honest limits, type 2 diabetes risk" />
+<link rel="canonical" href="https://diabetes-risk.vercel.app/about" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Honest limits — diabetes risk screening" />
+<meta property="og:description" content="Why screening matters, how the model was built, and where it is not trustworthy." />
+<meta property="og:url" content="https://diabetes-risk.vercel.app/about" />
+<meta property="og:image" content="https://diabetes-risk.vercel.app/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.97d865ca.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="/styles.c6fb2b03.css" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  "name": "Honest limits — diabetes risk screening",
+  "description": "Why diabetes screening matters, how the model was built, and its documented limitations.",
+  "disclaimer": "Educational risk estimate only — not a medical diagnosis."
+}
+</script>
+<style>
+.prose-block { background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 18px; margin: 14px 0; }
+.cards { display: grid; gap: 14px; }
+@media (min-width: 640px) { .cards { grid-template-columns: repeat(4, 1fr); } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span><span class="brand-text"><strong>Diabetes Risk Check</strong></span></a>
+    <nav class="site-nav" aria-label="Site"><a href="/how">How it works</a><a href="/summary">The numbers</a><a href="/about">Honest limits</a></nav>
+  </div>
+</header>
+<main class="wrap prose-page">
+  <h1>Honest limits, stated plainly</h1>
+  <p>This tool exists because early diabetes is quiet: millions of people carry it without dramatic symptoms, and the ones they do notice frequently go unconnected to each other. A cheap, instant pattern check that can nudge someone toward a simple blood test fills a real gap. But it has limits, and you deserve them spelled out.</p>
+  <div class="cards">
+    <div class="prose-block"><p><strong>Not a diagnosis.</strong> A score is a prompt to get tested. Only labs and a clinician can determine your status.</p></div>
+    <div class="prose-block"><p><strong>Small dataset.</strong> 520 records, 61.5% positive. Good for learning symptom patterns; not enough for certainty in edge cases.</p></div>
+    <div class="prose-block"><p><strong>Self-reported symptoms.</strong> Training data recorded what people said they felt — subjective and occasionally inconsistent with clinical reality.</p></div>
+    <div class="prose-block"><p><strong>Zero-symptom blind spot.</strong> Only 9 records in the dataset have no marked symptoms — 6 of them positive, all female. With no better pattern to learn, the model scores the no-symptom slice high, even for men. The site shows a caveat when it does this. Treat a high score with no symptoms marked as unreliable, either direction.</p></div>
+    <div class="prose-block"><p><strong>No blood values.</strong> The model sees symptoms only — no glucose, HbA1c, or BMI entered in the training data. A real clinical risk model would combine both.</p></div>
+    <div class="prose-block"><p><strong>Not emergency guidance.</strong> If you have severe vomiting, deep rapid breathing, fruity-smelling breath or confusion, seek urgent care now — those can signal diabetic ketoacidosis, which no screening tool should triage.</p></div>
+    <div class="prose-block"><p><strong>Gender asymmetry is in the data.</strong> 90.1% of female records are positive vs 44.8% of male. The model reflects that faithfully; a male/no-symptom high score deserves extra skepticism.</p></div>
+    <div class="prose-block"><p><strong>No follow-up data.</strong> The dataset doesn't track who later developed diabetes, so this is about current symptom patterns — not a prediction of your future.</p></div>
+  </div>
+  <div class="section-head"><h2>Why this is still worth doing</h2></div>
+  <p>Despite all the above, the combination — cross-validated on real records, calibrated scores, instant and private, and explicit about failure modes on the page itself — is what a careful screening prompt should look like. The result is designed to get the right people to the right test, not to reassure or alarm anyone.</p>
+</main>
+<footer class="site-footer"><div class="wrap footer-inner">
+  <nav class="footer-nav"><a href="/">Back to the check</a><a href="/summary">The numbers</a></nav>
+  <p class="footer-disclaimer">Educational risk estimate only — not medical advice. Built by Piyush Chandra; dataset: Kaggle/NIDDK (520 records).</p>
+</div></footer>
+</body>
+</html>
