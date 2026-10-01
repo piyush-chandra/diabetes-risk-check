@@ -131,6 +131,12 @@ form { background: var(--bg-soft); border: 1px solid var(--border); border-radiu
 .factor-name { font-weight: 600; font-size: .93rem; }
 .factor-bar { height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; display: block; }
 .factor-fill { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+/* per-fold dots on the GAN page (rendered by gan.js; CSP-safe, no inline styles) */
+.folds { display: grid; gap: 8px; margin: 14px 0; }
+.fold-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: .86rem; }
+.fold-name { min-width: 240px; font-weight: 600; }
+.fold-dots { display: inline-flex; gap: 6px; }
+.fold-dot { width: 10px; height: 10px; border-radius: 999px; background: var(--accent); display: inline-block; }
 .next-steps { padding-left: 22px; margin: 0; display: grid; gap: 8px; font-size: .95rem; }
 .disclaimer { color: var(--fg-muted); font-size: .84rem; margin-top: 12px; border-top: 1px dashed var(--border-strong); padding-top: 10px; }
 

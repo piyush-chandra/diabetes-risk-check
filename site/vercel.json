@@ -1,0 +1,39 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "_note": "Source-of-truth config for deploys straight from public/ (unhashed URLs -> short TTLs). Production deploys come from train/build.py's deploy/ output with per-file literal rules and per-page CSP meta tags.",
+  "builds": [{ "src": "**", "use": "@vercel/static" }],
+  "headers": [
+    {
+      "source": "/model.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/comparison.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/(model|app|summary).js",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
+    },
+    {
+      "source": "/styles.css",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=(), interest-cohort=()" }
+      ]
+    }
+  ]
+}

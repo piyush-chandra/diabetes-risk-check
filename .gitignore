@@ -1,1 +1,7 @@
 .vercel
+__pycache__/
+diabetes-venv/
+deploy/
+train/*.json
+site/public/*.json
+.DS_Store

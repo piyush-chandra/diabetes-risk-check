@@ -141,8 +141,9 @@
     // exact query mask: bit (i-1) = feature i (Gender + 14 symptoms)
     let qm = 0;
     for (let i = 1; i < 16; i++) if (raw[i] >= 0.5) qm |= 1 << (i - 1);
-    // bounded insertion list of the k smallest (dist, label) — n=520, k=21,
-    // so a hand-rolled heap buys nothing and risks subtle ordering bugs.
+    // bounded insertion list of the k smallest (dist, label) — n is the
+    // unique-profile table (~251 rows), k=21, so a hand-rolled heap buys
+    // nothing and risks subtle ordering bugs.
     const best = []; // sorted ascending by dist, capped at k
     const consider = (d2, label) => {
       if (best.length < k) {
@@ -203,16 +204,22 @@
     return { prob: sigmoid(z), parts: p, xs, raw };
   }
 
-  // Marginal contribution of each feature: how much moving it to the average
-  // (scaler mean) value moves the stacked probability. Cheap, stable, and
-  // reads as "this symptom is pushing your score up".
+  // Marginal contribution of each feature: how much the stacked probability
+  // moves when that feature is set to its "off" value — No (0) for symptoms,
+  // the training mean for Age, the opposite sex for Gender — holding
+  // everything else at the visitor's answers. Reads as "this answer is
+  // pushing your score up", and 0 means "this answer adds nothing".
   function contributions(raw, model) {
     const base = predictAll(raw, model).prob;
     const out = {};
     for (let i = 0; i < model.features.length; i++) {
       const key = model.features[i];
       const alt = raw.slice();
-      alt[i] = model.neutral[i];
+      // "off" state per feature type: symptoms -> No, Age -> training mean,
+      // Gender -> the other sex (so its base-rate shift is visible, not hidden)
+      if (key === "Age") alt[i] = model.neutral[i];
+      else if (key === "Gender") alt[i] = raw[i] >= 0.5 ? 0 : 1;
+      else alt[i] = 0;
       const p2 = predictAll(alt, model).prob;
       out[key] = { delta: base - p2, value: raw[i] };
     }

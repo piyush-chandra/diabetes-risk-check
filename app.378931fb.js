@@ -34,17 +34,28 @@
     { key: "partial paresis", label: "Numb/weak muscles", hint: "Partial loss of muscle strength (paresis)" },
     { key: "muscle stiffness", label: "Stiff muscles", hint: "Muscles feeling tight or hard to move" },
     { key: "Alopecia", label: "Hair loss", hint: "Noticeable thinning or patchy hair loss" },
-    { key: "Obesity", label: "Bulging waistline / obesity", hint: "A doctor diagnoes or body-mass above 30" },
+    { key: "Obesity", label: "Bulging waistline / obesity", hint: "A doctor diagnosis or body-mass above 30" },
   ];
   const AGE = "Age";
   const GENDER = "Gender";
 
-  // Risk bands: higher (low|moderate|high). Same ranges the model animates.
-  const BANDS = [
-    { max: 0.06, key: "low", colour: "var(--ok)" },
-    { max: 0.6, key: "moderate", colour: "var(--warn)" },
-    { max: Infinity, key: "high", colour: "var(--risk)" },
-  ];
+  // Bands come from the shipped model (measured on out-of-fold scores), with
+  // a hardcoded fallback if model.json predates them.
+  function bands() {
+    const b = MODEL && MODEL.meta && MODEL.meta.bands;
+    if (b && b.low_max < b.high_min) {
+      return [
+        { max: b.low_max, key: "low", colour: "var(--ok)" },
+        { max: b.high_min, key: "moderate", colour: "var(--warn)" },
+        { max: Infinity, key: "high", colour: "var(--risk)" },
+      ];
+    }
+    return [
+      { max: 0.25, key: "low", colour: "var(--ok)" },
+      { max: 0.6, key: "moderate", colour: "var(--warn)" },
+      { max: Infinity, key: "high", colour: "var(--risk)" },
+    ];
+  }
 
   // ------------------------------------------------------------ state
   let MODEL = null;
@@ -52,8 +63,9 @@
 
   // ------------------------------------------------------------ helpers
   function bandFor(p) {
-    for (const b of BANDS) if (p < b.max) return b;
-    return BANDS[BANDS.length - 1];
+    const list = bands();
+    for (const b of list) if (p < b.max) return b;
+    return list[list.length - 1];
   }
 
   function fmt(s) {
@@ -102,9 +114,11 @@
     for (let i = 0; i < model.length; i++) {
       const key = model[i];
       if (key === AGE) {
-        raw[i] = getAge();
+        raw[i] = getAge(); // throws if no age chosen — never silently default
       } else if (key === GENDER) {
-        raw[i] = $("#gender").value === "1" ? 1 : 0;
+        const g = $("#gender").value;
+        if (g !== "1" && g !== "0") throw new Error("sex not chosen");
+        raw[i] = g === "1" ? 1 : 0;
       } else {
         const sel = $(`select[data-feature="${key.replace(/"/g, "")}"]`);
         raw[i] = sel && sel.value === "1" ? 1 : 0;
@@ -114,20 +128,28 @@
   }
 
   function getAge() {
-    let age = parseInt($("#age").value, 10);
-    if (!isFinite(age)) age = 45; // never crash on blank age
+    const v = $("#age").value;
+    if (v === "" || v === null) throw new Error("age not chosen");
+    const age = parseInt(v, 10);
+    if (!isFinite(age)) throw new Error("age not chosen");
     return Math.min(120, Math.max(1, age));
+  }
+
+  function showFormError(msg) {
+    const el = $("#form-status");
+    if (el) el.textContent = msg;
   }
 
   // ------------------------------------------------------------ predict
   function runPrediction(e) {
     e.preventDefault();
     if (!MODEL) return;
+    showFormError("");
     let raw;
     try {
       raw = readForm();
     } catch (err) {
-      console.error(err);
+      showFormError("Please choose your age and sex before checking — the pattern can't be read without them.");
       return;
     }
     let res;
@@ -135,34 +157,54 @@
       res = window.DiabetesModel.predict(raw, MODEL);
     } catch (err) {
       console.error("predict failed", err);
-      $("#form-status").textContent = "Something went wrong calculating. Please refresh.";
+      showFormError("Something went wrong calculating. Please refresh.");
       return;
     }
     const pct = Math.round(res.prob * 100);
     const band = bandFor(res.prob);
+    const yesCount = raw.slice(2).filter(Boolean).length;
+    const noSymptoms = yesCount === 0;
     LAST = { raw, prob: res.prob, parts: res.parts, contrib: window.DiabetesModel.contributions(raw, MODEL) };
 
-    // headline
+    // headline — a pattern match against a clinic questionnaire, not a risk
+    // forecast for the general population
     ($("#result-heading")).textContent =
-      band.key === "low" ? "Low risk" : band.key === "moderate" ? "Moderate risk" : "High risk";
+      band.key === "low" ? "Low match" : band.key === "moderate" ? "Moderate match" : "High match";
     ($("#result-gauge")).textContent = pct + "%";
     ($("#result-gauge")).style.setProperty("color", band.colour);
-    ($("#result-sub")).textContent =
-      band.key === "low"
-        ? "Your symptom pattern doesn't match this dataset's diabetes cases."
+    if (noSymptoms) {
+      ($("#result-sub")).textContent =
+        "You marked no symptoms, so this score leans almost entirely on age and sex. " +
+        "In the training data, the 9 women with no marked symptoms were mostly positive " +
+        "(including five identical age-35 records), while all 44 men with no symptoms were " +
+        "negative — so a high score here says more about that thin slice than about you. " +
+        "Treat it as unreliable either way; a blood test is the only real answer.";
+    } else {
+      ($("#result-sub")).textContent =
+        band.key === "low"
+        ? "Your symptom pattern doesn't match this clinic's diabetes cases."
         : band.key === "moderate"
-        ? "Some of your answers match patterns seen in diabetes cases. A blood test would settle it."
-        : "Many of your answers match patterns commonly seen with diabetes. Arrange a blood test.";
+        ? "Some of your answers match patterns seen in diabetes cases at this clinic. A blood test would settle it."
+        : "Many of your answers match patterns commonly seen with diabetes at this clinic. Arrange a blood test.";
+    }
     $("#result").hidden = false;
     $("#result").scrollIntoView({ behavior: "smooth", block: "start" });
     renderFactors(LAST.contrib);
-    renderNextSteps(band.key);
+    renderNextSteps(band.key, noSymptoms);
     $("#ask-assistant").hidden = false;
   }
 
   // ------------------------------------------------------------ next steps
-  function renderNextSteps(band) {
-    const steps = {
+  function renderNextSteps(band, noSymptoms) {
+    let steps;
+    if (noSymptoms) {
+      steps = [
+        "Treat this score as unreliable — with no symptoms marked it reflects a thin, skewed slice of the training data, not you.",
+        "Ask for an HbA1c blood test (no fasting needed) if you have any reason for concern — it gives a real number either way.",
+        "Mention anything that changes at your next routine visit, even if this tool scored it low.",
+      ];
+    } else {
+      steps = {
       high: [
         "Book a doctor's appointment within the next week or two — routine slot is fine, mention your symptoms.",
         "Ask for an HbA1c blood test (no fasting needed) or a fasting glucose test.",
@@ -178,7 +220,8 @@
         "If symptoms change or new ones appear, re-check here or with your doctor.",
         "Mention anything you marked at your next routine check-up.",
       ],
-    }[band];
+      }[band];
+    }
     const ids = ["next-step-1", "next-step-2", "next-step-3"];
     ids.forEach((id, i) => {
       const el = document.getElementById(id);
@@ -187,12 +230,14 @@
   }
 
   // ------------------------------------------------------------ what-if
-  // Shows the 3 biggest up-drivers for the last submitted profile.
+  // Shows the 3 biggest up-drivers for the last submitted profile, including
+  // sex — the dataset's base-rate shift (90% of female records positive vs
+  // 45% of male) is the largest single driver and must not be hidden.
+  const EXTRA_LABELS = { Age: "Age", Gender: "Sex as recorded in the data" };
   function renderFactors(contrib) {
     const list = $("#factor-list");
     if (!list) return;
     const entries = Object.keys(contrib)
-      .filter((k) => k !== AGE && k !== GENDER)
       .map((k) => ({ k, d: contrib[k].delta }))
       .filter((e) => e.d > 0.002)
       .sort((a, b) => b.d - a.d)
@@ -206,7 +251,7 @@
     const maxd = entries[0].d;
     for (const e of entries) {
       const spec = SYMPTOMS.find((s) => s.key === e.k);
-      const label = spec ? spec.label : e.k;
+      const label = spec ? spec.label : (EXTRA_LABELS[e.k] || e.k);
       const pct = Math.round((e.d / maxd) * 100);
       // width set via CSSOM (CSP-safe), not an inline style attribute
       const li = document.createElement("li");
@@ -266,10 +311,11 @@
       return "The evidence-backed basics: keep your weight in a healthy range, move most days, and don't smoke. But this tool doesn't know your full picture — a doctor should guide any plan. And remember: a score is a prompt to test, not a diagnosis.";
     }
     if (/score|mean|how/.test(t)) {
-      return "Your score compares your answers with the patterns in 520 real patient records. It's a rough gauge, not a diagnosis — blood tests are the only real confirmation. This tool works entirely on your device; nothing was uploaded.";
+      const n = (MODEL && MODEL.meta && MODEL.meta.n_unique) || "251 unique";
+      return "Your score compares your answers with the patterns in " + n + " unique patient profiles from a diabetes-hospital questionnaire (520 rows with exact copies removed). It's a rough gauge, not a diagnosis — blood tests are the only real confirmation. This tool works entirely on your device; nothing was uploaded.";
     }
     if (yesCount === 0 && band === "high") {
-      return "Note something important: you marked no symptoms but scored high. That's a real weakness of this dataset — its few zero-symptom records skew positive. Trust a blood test over this result.";
+      return "Note something important: you marked no symptoms but scored high. In the training data, all 44 men with no symptoms were negative, while 6 of the 9 women with no symptoms were positive (five of them the same age-35 record) — so this slice is thin and skewed. Trust a blood test over this result.";
     }
     return "I'm a small built-in assistant, not a doctor. I can explain the score, suggest an HbA1c blood test, or outline when to see a doctor. What would you like to know?";
   }
@@ -277,7 +323,7 @@
   // ------------------------------------------------------------ model load
   async function loadModel() {
     try {
-      const res = await fetch("/model.5c8b2e08.json");
+      const res = await fetch("/model.68b2215b.json");
       if (!res.ok) throw new Error("model fetch " + res.status);
       MODEL = window.DiabetesModel.load(await res.json());
       buildForm();
