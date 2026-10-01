@@ -277,7 +277,7 @@
   // ------------------------------------------------------------ model load
   async function loadModel() {
     try {
-      const res = await fetch("/model.f9aee09a.json");
+      const res = await fetch("/model.5c8b2e08.json");
       if (!res.ok) throw new Error("model fetch " + res.status);
       MODEL = window.DiabetesModel.load(await res.json());
       buildForm();
