@@ -30,7 +30,7 @@ DATA_HASHED = ["model.js", "styles.css", "summary.js", "gan_results.json", "mode
 # entry scripts: repointed at hashed data names FIRST, then hashed
 APP_HASHED = ["app.js", "gan.js"]
 KEEP = ["index.html", "summary.html", "about.html", "how.html", "gan.html", "robots.txt",
-        "404.html", "favicon.ico", "apple-touch-icon.png", "sitemap.xml"]
+        "404.html", "favicon.ico", "apple-touch-icon.png", "sitemap.xml", "og-image.png"]
 
 
 def h8(p: Path) -> str:
@@ -178,6 +178,18 @@ def main():
     }
     (OUT / "vercel.json").write_text(json.dumps(cfg, indent=2) + "\n")
     print(f"\nwrote {OUT}")
+
+    # _headers for Cloudflare Pages (vercel.json cache rules are ignored there)
+    hl = []
+    for hashed in mapping.values():
+        hl.append("/" + hashed + "\n  Cache-Control: public, max-age=31536000, immutable\n")
+    for page in ["index.html", "summary.html", "about.html", "how.html", "gan.html", "404.html",
+                 "index", "summary", "about", "how", "gan"]:
+        hl.append("/" + page + "\n  Cache-Control: public, max-age=0, must-revalidate\n")
+    for f in ["comparison.json", "sitemap.xml", "robots.txt"]:
+        hl.append("/" + f + "\n  Cache-Control: public, max-age=3600\n")
+    (OUT / "_headers").write_text("\n".join(hl) + "\n")
+    print("  wrote _headers")
 
     # sanity gates
     stale = []
