@@ -29,7 +29,8 @@ OUT = ROOT / "deploy"
 DATA_HASHED = ["model.js", "styles.css", "summary.js", "gan_results.json", "model.json", "favicon.svg"]
 # entry scripts: repointed at hashed data names FIRST, then hashed
 APP_HASHED = ["app.js", "gan.js"]
-KEEP = ["index.html", "summary.html", "about.html", "how.html", "gan.html", "robots.txt"]
+KEEP = ["index.html", "summary.html", "about.html", "how.html", "gan.html", "robots.txt",
+        "404.html", "favicon.ico", "apple-touch-icon.png", "sitemap.xml"]
 
 
 def h8(p: Path) -> str:
